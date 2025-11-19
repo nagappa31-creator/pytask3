@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Management API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input, button {
+            margin: 5px;
+            padding: 8px;
+        }
+        .box {
+            padding: 15px;
+            border: 1px solid #ccc;
+            width: 400px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📚 Book Management (REST API)</h1>
+
+    <!-- GET ALL BOOKS -->
+    <div class="box">
+        <h3>GET All Books</h3>
+        <button onclick="getBooks()">Load Books</button>
+        <pre id="booksOutput"></pre>
+    </div>
+
+    <!-- ADD A BOOK -->
+    <div class="box">
+        <h3>POST Add Book</h3>
+        <input type="text" id="title" placeholder="Book Title"><br>
+        <input type="text" id="author" placeholder="Author"><br>
+        <button onclick="addBook()">Add Book</button>
+        <p id="addOutput"></p>
+    </div>
+
+    <!-- UPDATE A BOOK -->
+    <div class="box">
+        <h3>PUT Update Book</h3>
+        <input type="number" id="updateId" placeholder="Book ID"><br>
+        <input type="text" id="updateTitle" placeholder="New Title"><br>
+        <input type="text" id="updateAuthor" placeholder="New Author"><br>
+        <button onclick="updateBook()">Update</button>
+        <p id="updateOutput"></p>
+    </div>
+
+    <!-- DELETE A BOOK -->
+    <div class="box">
+        <h3>DELETE Book</h3>
+        <input type="number" id="deleteId" placeholder="Book ID"><br>
+        <button onclick="deleteBook()">Delete</button>
+        <p id="deleteOutput"></p>
+    </div>
+
+<script>
+    const API_URL = "http://localhost:3000/books";
+
+    // GET
+    function getBooks() {
+        fetch(API_URL)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("booksOutput").textContent = JSON.stringify(data, null, 2);
+            });
+    }
+
+    // POST
+    function addBook() {
+        let title = document.getElementById("title").value;
+        let author = document.getElementById("author").value;
+
+        fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title, author })
+        })
+        .then(res => res.json())
+        .then(() => {
+            document.getElementById("addOutput").textContent = "Book Added!";
+            getBooks();
+        });
+    }
+
+    // PUT
+    function updateBook() {
+        let id = document.getElementById("updateId").value;
+        let title = document.getElementById("updateTitle").value;
+        let author = document.getElementById("updateAuthor").value;
+
+        fetch(`${API_URL}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title, author })
+        })
+        .then(res => res.json())
+        .then(() => {
+            document.getElementById("updateOutput").textContent = "Book Updated!";
+            getBooks();
+        });
+    }
+
+    // DELETE
+    function deleteBook() {
+        let id = document.getElementById("deleteId").value;
+
+        fetch(`${API_URL}/${id}`, { method: "DELETE" })
+        .then(res => res.json())
+        .then(() => {
+            document.getElementById("deleteOutput").textContent = "Book Deleted!";
+            getBooks();
+        });
+    }
+</script>
+
+</body>
+</html>
